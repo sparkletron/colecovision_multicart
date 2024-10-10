@@ -1,6 +1,5 @@
 (sym_lib_table
-  (lib (name PIC18)(type Legacy)(uri ${KIPRJMOD}/lib/PIC18F45K50/PIC18.lib)(options "")(descr ""))
-  (lib (name PJ-079BH)(type Legacy)(uri ${KIPRJMOD}/lib/LIB_PJ-079BH/PJ-079BH.lib)(options "")(descr ""))
-  (lib (name 10046971-001LF)(type Legacy)(uri ${KIPRJMOD}/lib/LIB_10046971-001LF/10046971-001LF.lib)(options "")(descr ""))
-  (lib (name PICerino-rescue)(type Legacy)(uri ${KIPRJMOD}/PICerino-rescue.lib)(options "")(descr ""))
+  (version 7)
+  (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "${KIPRJMOD}/lib/KiCad-RP-Pico/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.kicad_sym")(options "")(descr ""))
+  (lib (name "Logic_Level_Translator")(type "KiCad")(uri "${KIPRJMOD}/lib/LOGIC_LEVEL_TRANS/Logic_Level_Translator.kicad_sym")(options "")(descr ""))
 )

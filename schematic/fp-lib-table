@@ -1,4 +1,5 @@
 (fp_lib_table
-  (lib (name PJ-079BH)(type Legacy)(uri ${KIPRJMOD}/lib/LIB_PJ-079BH/PJ-079BH.mod)(options "")(descr ""))
-  (lib (name 10046971-001LF)(type Legacy)(uri ${KIPRJMOD}/lib/LIB_10046971-001LF/10046971-001LF.mod)(options "")(descr ""))
+  (version 7)
+  (lib (name "Connector_PCBEdge_EXT")(type "KiCad")(uri "${KIPRJMOD}/lib/CONNECTOR_PCBEdge_EXT/Connector_PCBEdge_EXT.pretty")(options "")(descr ""))
+  (lib (name "MCU_RaspberryPi_and_Boards")(type "KiCad")(uri "${KIPRJMOD}/lib/KiCad-RP-Pico/RP-Pico Libraries/MCU_RaspberryPi_and_Boards.pretty")(options "")(descr ""))
 )
