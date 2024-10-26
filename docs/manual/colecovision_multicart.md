@@ -24,7 +24,15 @@ less. This cart does not support MEGA roms.
 Dependecies
 -----------
 
-COMING SOON(TM)
+Tested with Ubuntu 22.04
+
+-   KiCAD v7.X
+
+-   xc8 v2.31 or greater
+
+-   sdcc v4.0.0 or greater
+
+-   make (build-essential)
 
 Building
 --------

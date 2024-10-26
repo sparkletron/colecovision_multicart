@@ -22,7 +22,7 @@ $(MD): $(SRC)
 	pandoc -f latex -t markdown -s -o $@ $<
 
 $(WIKI_DIR)/$(WIKI): $(SRC)
-	pandoc -f latex -t markdown -s -o $@ $<
+# 	pandoc -f latex -t markdown -s -o $@ $<
 
 clean:
 	rm -rf $(PDF) $(MD)
