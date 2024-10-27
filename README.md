@@ -11,12 +11,15 @@ license: MIT
 
 ## Release Versions
 ### Current
+
   - pre-alpha
 
 ### Past
+
   - none
   
 ## Requirements
+
   - KiCad v7.X
   - xc8 v2.31 or greater
   - sdcc v4.0.0 or greater
@@ -25,6 +28,7 @@ license: MIT
   Tested on Ubuntu 22.04
 
 ## Brief Information
+
   Each folder in this root directory contains a part of the project, they are as follows.
   - docs, all documentation and detailed user manual.
   - schematic, Electrical schematic and gerbers from KiCAD.
@@ -32,4 +36,5 @@ license: MIT
   - models, STL files for printing out cart shell.
 
 ## Detailed Information
-  Please navigate to docs/manual for in depth project documentation.
+
+  Please navigate to docs/manual or the github wiki for in depth project documentation.
