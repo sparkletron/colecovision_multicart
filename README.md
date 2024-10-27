@@ -1,6 +1,8 @@
 # Colecovision Multicart
 ## 15 in 1 flash ROM cart for Colecovision 32KiB ROMS.
 
+![image](docs/manual/src/img/SPARKLETRON.png)
+
 author: Jay Convertino  
 
 date: 2024.10.26
