@@ -9,7 +9,7 @@ MD=$(notdir $(SRC:.tex=.md))
 WIKI=Home.md
 WIKI_DIR=colecovision_multicart.wiki
 
-.phony: clean $(PDF) $(WIKI_DIR)/$(WIKI)
+.PHONY: clean $(PDF) $(WIKI_DIR)/$(WIKI)
 
 all: $(PDF) $(WIKI_DIR)/$(WIKI)
 

@@ -204,7 +204,7 @@
     \item \textbf{src} Contains all source code related to the project.
       \begin{itemize}
         \item \textbf{pic\_coleco\_addr\_sel} pic16 source code and build system, uses xc8 compiler. Any version over 2.X should work fine.
-        \item \textbf{firmware} Colecovision development kit that uses SDCC. The multicart app will generate the project and build rom file.
+        \item \textbf{RODAC} Colecovision development kit that uses SDCC. The multicart app will generate the project and build rom file.
       \end{itemize}
     \item \textbf{models} Contains all STL models for cartridge case.
   \end{enumerate}
@@ -260,14 +260,15 @@
   in 1000ns. Still not perfect, but better than the C generated code. The resulting code is below.
 
   \begin{lstlisting}[language={[xc8]Assembler}]
-    bcf STATUS, 5
-    bcf STATUS, 6
-    test:
-    movf  PORTA,w
-    addlw 0xF0
-    btfsc STATUS,0
-    goto test
-    movwf 0x20
+
+  bcf STATUS, 5
+  bcf STATUS, 6
+  test:
+  movf  PORTA,w
+  addlw 0xF0
+  btfsc STATUS,0
+  goto test
+  movwf 0x20
   \end{lstlisting}
 
   \par
@@ -302,6 +303,7 @@
   Highlighting is done by writing a inverted character set to the pattern table of the TMS RAM. An example of this code is below.
 
   \begin{lstlisting}[language=C]
+
     /* invert ascii chars */
     for(int inv_index = 0; inv_index < sizeof(c_tms99XX_ascii); inv_index++)
     {
@@ -368,10 +370,11 @@
   Last is the reason for the reading E001 + index four times. This is dues to the PIC is explained in \ref{Excuses}. Example of the code below.
 
   \begin{lstlisting}[language=C]
-    buffer = *(bank_switch + index);
-    buffer = *(bank_switch + index);
-    buffer = *(bank_switch + index);
-    buffer = *(bank_switch + index);
+
+  buffer = *(bank_switch + index);
+  buffer = *(bank_switch + index);
+  buffer = *(bank_switch + index);
+  buffer = *(bank_switch + index);
   \end{lstlisting}
 
 \end{document}
