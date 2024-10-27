@@ -78,8 +78,13 @@
   \subsection{Building}
 
   \par
-  The easy way to do this, with all dependencies installed is to navigate to the src folder. Once in the source folder simply run the make command.
-  This will build the microcontoller code and Colecovision ROM. The results of which are located in there respective folders. For the PIC this would be
+  \paragraph{The Easy Way} To accomplish the build with a single command, navigate to the src folder that is located in the root of this repo. Once in the source folder simply run...
+
+  \begin{lstlisting}[language=bash]
+    $ make
+  \end{lstlisting}
+
+  This will build the microcontoller code and Colecovision ROM, if all dependencies are installed. The results of which are located in there respective folders. For the PIC this would be
   pic\_coleco\_addr\_sel/exe/colecoMultiCart.hex . For the Colecovision this would be RODAC/apps/multicart/complete\_coleco\_multicart.bin.
 
   \subsubsection{Colecovision ROM}

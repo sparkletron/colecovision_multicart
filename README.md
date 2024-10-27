@@ -29,6 +29,12 @@ license: MIT
 
 ## Brief Information
 
+  Be sure to pull ALL submodules. The command for this is...
+
+  ```console
+  foo@bar:~$ git submodule update --init --recursive
+  ```
+
   This project creates a complete 15 in 1 multicart for the Colecovision. It will generate the needed ROM
   image, and firmware. Provides all the files needed for PCB creation, and the 3D printed case creation.
 
