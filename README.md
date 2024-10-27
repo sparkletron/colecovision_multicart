@@ -32,7 +32,7 @@ license: MIT
   Be sure to pull ALL submodules. The command for this is...
 
   ```console
-  foo@bar:~$ git submodule update --init --recursive
+  git submodule update --init --recursive
   ```
 
   This project creates a complete 15 in 1 multicart for the Colecovision. It will generate the needed ROM
