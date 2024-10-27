@@ -1,3 +1,6 @@
 [submodule "src/RODAC"]
 	path = src/RODAC
 	url = https://github.com/sparkletron/RODAC.git
+[submodule "docs/manual/colecovision_multicart.wiki"]
+	path = docs/manual/colecovision_multicart.wiki
+	url = git@github.com:sparkletron/colecovision_multicart.wiki.git
