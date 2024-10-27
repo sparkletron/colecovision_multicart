@@ -19,10 +19,10 @@ $(PDF): $(SRC)
 	rm $(AUX) $(LOG) $(TOC) $(OUT)
 
 $(MD): $(SRC)
-	pandoc -f latex -t markdown -s -o $@ $<
+	pandoc -f latex -t gfm -s -o $@ $<
 
 $(WIKI_DIR)/$(WIKI): $(SRC)
-	pandoc -f latex -t markdown -s -o $@ $<
+	pandoc -f latex -t gfm -s -o $@ $<
 
 clean:
 	rm -rf $(PDF) $(MD) $(WIKI_DIR)/$(WIKI)
