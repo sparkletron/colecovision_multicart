@@ -49,4 +49,7 @@ license: MIT
 
 ## Detailed Information
 
-  Please navigate to docs/manual or the [github wiki](https://github.com/sparkletron/colecovision_multicart/wiki) for in depth project documentation.
+  For detailed usage information, please navigate to one of the following sources. They are the same, just in a different format.
+
+  - [colecovision_multicart.pdf](docs/manual/colecovision_multicart.pdf)
+  - [github wiki](https://github.com/sparkletron/colecovision_multicart/wiki)
