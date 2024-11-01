@@ -1,7 +1,14 @@
 \documentclass{article}
 \usepackage{graphicx}
 \usepackage{titling}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{xcolor}
 \usepackage{listings}
+\lstset{
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
 \usepackage{titlesec}
 \usepackage{dirtree}
 \usepackage{indentfirst}
@@ -45,8 +52,8 @@
   \subsection{Introduction}
 
   \par
-  This manual describes how to use the Multicart project and its architecture. This cart was design to be cheap, and easy to use.
-  By using a very basic microcontroller and some inline assembly a reliable multicart has been created. This cart allows you to
+  This manual describes how to use the Multicart project and its architecture. This cart was designed to be cheap, and easy to use.
+  By using a very basic microcontroller, and some inline assembly, a reliable multicart has been created. This cart allows you to
   select between 15 different ROMs. These 15 ROMs can be any Colecovision, or Colecovision Super Game Module game you wish. Only
   caveat is it has to be 32 KiB or less. This cart does not support MEGA ROMs.
 
@@ -77,15 +84,66 @@
 
   \subsection{Building}
 
+  \paragraph{Parts List} \label{Parts}
+
   \par
-  \paragraph{The Easy Way} To accomplish the build with a single command, navigate to the src folder that is located in the root of this repo. Once in the source folder simply run...
+  \begin{itemize}
+    \item 1 pic16f648a
+    \item 1 74HC148
+    \item 1 SST39SF040
+    \item 3 100nF 10v or greater ceramic capacitor
+    \item 1 bottom case
+    \item 1 top case
+    \item 1 double sided PCB
+    \item 4 \#4-24 x 1/2 inch Philips screws (FASTENAL 31206)
+  \end{itemize}
 
-  \begin{lstlisting}[language=bash]
-    $ make
-  \end{lstlisting}
+  \par
+  \paragraph{The Easy Way, Step By Step}
 
-  This will build the microcontoller code and Colecovision ROM, if all dependencies are installed. The results of which are located in there respective folders. For the PIC this would be
-  pic\_coleco\_addr\_sel/exe/colecoMultiCart.hex . For the Colecovision this would be RODAC/apps/multicart/complete\_coleco\_multicart.bin.
+  \begin{itemize}
+    \item \textbf{Order your parts, see {\ref{Parts}}}
+    \item \textbf{PCB}
+      \begin{enumerate}
+        \item Send the file schematic/gerber/colecovision\_multicart.zip to your prefered fab.
+        \item Standard board of 1.6mm thick with 1oz copper, double sided is fine.
+        \item Wait
+      \end{enumerate}
+    \item \textbf{Build the ROM, and PIC software}
+      \begin{enumerate}
+        \item Install sdcc v4.0.0 or greater.
+        \item Install make
+        \item Install xc8-cc
+        \item Install MPLAB IPE
+        \item Add up to 15 32 or less KiB ROMS to the src/roms folder. They must end in *.col.
+        \item While in the src folder, run the following command to build the PIC firmware and multicart ROM.
+        {\begin{lstlisting}[language=bash]
+          $ make
+        \end{lstlisting}}
+        \item Program your PIC with a PICKIT or other programmer. FILE: src/pic\_coleco\_addr\_sel/exe/colecoMultiCart.hex
+        \item Program the FLASH IC. FILE: src/RODAC/apps/multicart/complete\_coleco\_multicart.bin
+      \end{enumerate}
+    \item \textbf{3D printed Case}
+      \begin{enumerate}
+        \item Import STL files into your slicer of choice, or send out for printing. Files are located in the models folder and are called bottom.stl and top.stl.
+        \item Note: I prefer ABS, but PLA should be fine.
+        \item Slice and Print or wait for it in the mail.
+      \end{enumerate}
+    \item \textbf{Assembly}
+      \begin{enumerate}
+        \item All parts are through hole, soldering these can be done with most irons.
+        \item Populate the PCB with the preprogrammed IC parts.
+        \item Add the last IC 74HC148
+        \item Solder all of the caps to the PCB
+        \item Ignore the extra holes, they are for an LED indicator that indicates the bank switch has been set. It does work, just didn't make a hole in the shell for it.
+        \item Place the PCB with the ICs facing up towards the top shell in the bottom shell of the cart. It is the bottom.stl file.
+        \item Place the top of the shell on the bottom shell. It may need some tweaking, but it will fit.
+        \item Insert the 4 screws into the back.
+        \item Place the cart on a hard flat surface, and tighten the screws till the shell is closed.
+        \item Add a label (avery 5816 is a good choice).
+      \end{enumerate}
+    \item \textbf{Enjoy your new cart!}
+  \end{itemize}
 
   \subsubsection{Colecovision ROM}
 
@@ -94,9 +152,9 @@
   The difference between this build system and others is the goal of targeting multiple systems with base libraries and very few ifdefs for switching out code.
   All paths given below are from the src/RODAC parent directory.
   \par
-  RODAC uses a makefile based build system. The all default target will build nothing. The makefile to build the apps is located in each app. For instance
+  RODAC uses a makefile based build system. The all target will build nothing in any of the apps. The makefile to build the apps is located in each app. For instance
   the HELLO\_WORLD application is located at apps/hello\_world. To execute the build you would simply navigate to apps/hello\_world, and run the make command with
-  your target system. Example is the Colecovision would be
+  your target system. Example for the Colecovision would be
 
   \begin{lstlisting}[language=bash]
     $ make coleco
@@ -109,25 +167,24 @@
   \end{lstlisting}
 
   \par
-  The app of interest is multicart, located at apps/multicart. Details about the code can be seen at \ref{Colecovision Multicart} . For now all we care about is building
+  The app of interest for this project is multicart, located at apps/multicart. Details about the code can be seen at \ref{Colecovision Multicart} . For now all we care about is building
   the code. Building is automated with a makefile that calls two python scripts. rom\_header\_gen.py, which alters the roms.h header string array with the names of the ROMs
   given to it. rom\_file\_gen.py is executed at the end and takes all of the ROM files, including the multicart program and generates the flash ROM image. This currently
-  defaults to 15 ROMs + Multicart for a total of 512 KiB. Each ROM is padded if it is less then 32 KiB. To execute this just simply run make coleco. This, again, will
-  call all the python generators and build all the source code for the multicart and generate the final ROM image.
+  defaults to 15 ROMs + Multicart for a total of 512 KiB. Each ROM is padded if it is less then 32 KiB.
 
   \paragraph{Burning ROM}
   To burn the ROM you will need to use the file complete\_coleco\_multicart.bin. This will be located in src/RODAC/apps/multicart. Any programmer compatible with the
   SST39SF040 will work without issue. For the minipro with a TL866A the example command is
 
   \begin{lstlisting}[language=bash]
-   $ minipro -p SST39SF040 -w complete_coleco_multicart.bin
+$ minipro -p SST39SF040 -w complete_coleco_multicart.bin
   \end{lstlisting}
 
   \subsubsection{Microcontroller Code}
 
   \par
   PIC16F648A is the target microcontroller. Building the code is handled by a makefile that calls xc8-cc. Currently using versions 2.31, but anything greater than that should work
-  fine but has not been tested. Simply navigate to src/pic\_coleco\_addr\_sel and run
+  fine, but has not been tested. Simply navigate to src/pic\_coleco\_addr\_sel and run
 
   \begin{lstlisting}[language=bash]
     $ make
@@ -137,37 +194,25 @@
   outputs are in the exe folder located in the same location. In the exe folder the output needed is colecoMultiCart.hex .
 
   \paragraph{Program PIC}
-  Easiest way without install all of MPLAB is to install MPLAB IPE only. This tool will allow you to use a PICKIT programmer with your PC and upload code to controller.
-  The flash board does not have a header for programming the PIC. Easiest way is to wire it up a breadboard with the chip and upload the code with a PICKIT and MPLAB IPE.
-  Again the file you will need is located at src/pic\_coleco\_addr\_sel/exe/colecoMultiCart.hex.
+  Easiest way without installing all of MPLAB is to install MPLAB IPE only. This tool will allow you to use a PICKIT programmer with your PC and upload code to controller.
+  The flash cart board does not have a header for programming the PIC. Easiest way is to wire it up a breadboard with the chip and upload the code with a PICKIT and MPLAB IPE.
+  The full file you will need is src/pic\_coleco\_addr\_sel/exe/colecoMultiCart.hex.
 
-  \subsubsection{Parts List}
-
-  \par
-  \begin{itemize}
-    \item 1 pic16f648a
-    \item 1 74HC148
-    \item 1 SST39SF040
-    \item 3 100nF 10v or greater ceramic capacitor
-    \item 1 bottom case
-    \item 1 top case
-    \item 1 double sided PCB
-    \item 4 \#4-24 x 1/2" Philips screws (FASTENAL 31206)
-  \end{itemize}
 
   \subsubsection{PCB}
 
   \par
   PCB design was created with KiCAD version 7.X. This is a double sided PCB for the Colecovision only. The
   design contains three vias for a few traces that needed to switch sides. Exported gerbers are located at
-  schematic/gerber/. This also contains a zip file for production use.
+  schematic/gerber/. This also contains a zip file for production use. Standard settings for any PCB house
+  will be fine.
 
   \subsubsection{3D printed Case}
 
   \par
   There are two STL files for 3D printing a cartridge case. The file bottom.stl is the bottom, and top.stl is the top.
   These files have been printed with ABS at 100.5 percent. The extra half I find offsets any shrinkage in the ABS I own.
-  PLA and such should not need this 0.5 percent increase in size. The case requires 4 screws. I used \#4-24 x 1/2"
+  PLA and such should not need this 0.5 percent increase in size. The case requires 4 screws. I used \#4-24 x 1/2 inch
   Philips screws from Fastenal, part number 31206.
 
   \subsection{Directory Guide}
@@ -221,10 +266,11 @@
     \item Boot Colecovision in standard banner mode. Display multicart title.
     \item Display selection screen in TMS text mode.
     \item Highlight current user selection, defaulting at the 1st entry.
+    \item Allow user to scroll through list, Highlight the user selected entry.
     \item Once fire is pressed, the highlighted entry is selected for bank switching.
     \item Colecovision code will load a new banner telling the user to reset the console.
     \item Colecovision will spam the address E001 + entry(0 to 14) 4 times to activate PIC.
-    \item When E000n enable line goes low and the PIC catches it, the PIC will then set its output address lines to the rom to the input address lines.
+    \item When E000n enable line goes low and the PIC catches it, the PIC will then set its ROM output address lines to the Coleco input address lines.
     \item User will reset console, console will now read the bank switched ROM from multicart.
   \end{enumerate}
 
@@ -242,7 +288,7 @@
   then waits for 1 second. After than second it bank switches the ROM. Since the console is halted this presents no issue and the user can now reset the console to
   start their game.
   \par
-  Getting the timing between the two perfect could be achieved, heck others have done it. Frankly, this was the easy way out for now. Maybe in the future I'll revisit it.
+  Getting the timing between the two perfect could be achieved, heck others have done it. Frankly, this was the easy way out for now. Maybe in the future I'll revisit the issue.
   Though the goal is small and cheap. Three IC's is fairly small for the multicart, and as it is now works perfectly for my usecase.
 
   \newpage
@@ -250,7 +296,7 @@
   \section{Code Highlights}
 
   \par
-  This section is parts of the code I think are interesting or just a bit more information about the files.
+  This section is parts of the code I think are interesting or could use just a bit more information about the files.
 
   \subsection{PIC address selection} \label{PIC address selection}
 
@@ -273,22 +319,21 @@
 
   \par
   The bcf STATUS clears the bank select bits to 0 before the loop that constantly reads the port. xc8 would put this in the loop.
-  The address pins and the E000n enable are on the same port. This is done by design. Since if its 0, we know that the address bits
-  also contained in the work register are valid. If we do a read after, we run the risk of missing the bits since we are polling the port.
-  By polling the port we don't know if we are close to the starting edge or ending edge of the pulse. If we are at the end we will miss the
+  The input address pins and the E000n enable are on the same port. This is done by design. Since if its 0, we know that the Coleco input address bits
+  contained in the work register are valid. If we do a read after, we run the risk of missing the bits since we are polling the port.
+  By polling the port we don't know if we are close to the leading edge or trailing edge of the pulse. If we are at the end we will miss the
   address since the next read to the port will be too late. The read from PORTA will always be b000XXXXX (X is unknown). The top 2 bits
   are always 0 by design per the PIC16F648a manual when using a crystal oscillator. Bit 5 is 0 since it is tied to ground. The rest are sampled
   from the inputs tied to them. Bit 4 is the E000n select line. Bits 3 to 0 are address lines 3 to 0 from the Colecovision. The reason bit 4 is
   the select line is if its high, 1, and a add of b11110000 (0xF0) is executed this will overflow. Then the instruction brfsc tests the STATUS bit.
-  If the bit is clear, we skip the next instruction, in this case the goto test that creates the loop. If it is 1, an overflow we continue the
-  loop. Once the carry is 0 we exit the loop and move the work register contents to general register h20. This is is so we don't destroy the
-  address value read earlier.
+  If it is 1, an overflow occured and we continue the loop. If the bit is clear, we skip the next instruction, in this case the goto test that creates the loop.
+  Once we exit the loop and move the work register contents to general register h20. This is is so we don't destroy the address value read earlier.
 
   \par
-  Next we the code will delay for about one second. This is so the Colecovision can reach the HALT state before the new address value for the
-  bank switch is applied. If this happened before the HALT the code would switch to the new bank causing issues as it would start executing
-  that code. The rest of the code simply pulls the contents of general register h20 back to the work register and writes it to PORTB. Then
-  the PIC loops forever doing nothing.
+  Next the code will delay for about one second. This is so the Colecovision can reach the HALT state before the new address value for the
+  bank switch is applied. If this happened before the HALT the code would switch to the new bank causing issues, as it would start executing
+  the new code. The rest of the code simply pulls the contents of general register h20 back to the work register and writes it to PORTB. This write
+  is the bank select based on the address read. Then the PIC loops forever doing nothing.
 
   \subsection{Colecovision Multicart} \label{Colecovision Multicart}
 
@@ -299,25 +344,24 @@
   \par
   The only library used is the TMS99XX. This was originally written for testing TMS based chips on a PIC mircocontroller. It worked well and has been
   ported to SDCC. This port needs polish, but does work well enough for the multicart application. This application does not use the NMI as its such
-  as slow update rate for user input. The TMS is put into TXT mode since it allows for 40 columns, and no sprites are needed for a simple menu.
+  a slow update rate for user input. The TMS is put into TXT mode since it allows for 40 columns, and no sprites are needed for a simple menu.
   Highlighting is done by writing a inverted character set to the pattern table of the TMS RAM. An example of this code is below.
 
   \begin{lstlisting}[language=C]
 
-    /* invert ascii chars */
-    for(int inv_index = 0; inv_index < sizeof(c_tms99XX_ascii); inv_index++)
-    {
-      /**** write data to port from array of data at index ****/
-      VDP_DATA_PORT = ~(((uint8_t *)c_tms99XX_ascii)[inv_index]);
-    }
+/* invert ascii chars */
+for(int inv_index = 0; inv_index < sizeof(c_tms99XX_ascii); inv_index++)
+{
+  /**** write data to port from array of data at index ****/
+  VDP_DATA_PORT = ~(((uint8_t *)c_tms99XX_ascii)[inv_index]);
+}
   \end{lstlisting}
 
   \par
   The index variable tracks the current selection of the ROM. This is from zero to fourteen. Once interesting bug I found was using mod 15 to do the wrap did
   not work well. It would sometimes go past in the emulator. Changed this to a ternary operator that does a comparison. This works for both going
-  less than zero or greater than 14. Also the top is dictated by the length of the string array. This allows the multicart program to support any size up to
-  the number of columns available. Scrolling has not been added. Maybe in the future. The filtering is only for the up/down input. The fire button is
-  unfiltered.
+  less than zero or greater than 14. The number of items allowed to be indexed is dictated by the length of the string array.
+  This allows the multicart program to support any size up to the number of rows available. Scrolling has not been added. Maybe in the future.
   \par
   The controller read is done in a way to make it quick when the button is held, but also work when quickly pressed by the user. A buffer filters the input
   presses of the user, and is simply shifted until it is 0. Then there is timeout counter that if nothing is pressed, the buffer is reset to its default value
@@ -325,56 +369,56 @@
 
   \begin{lstlisting}[language=C]
 
-    if(!((controller >> FIRE_BIT) & 0x01))
-    {
-      //do we care?
-    }
-    else if(!((controller >> UP_BIT) & 0x01))
-    {
-      buffer = buffer << 1;
+if(!((controller >> FIRE_BIT) & 0x01))
+{
+  //do we care?
+}
+else if(!((controller >> UP_BIT) & 0x01))
+{
+  buffer = buffer << 1;
 
-      if(!buffer)
-      {
-        index = (index > 0 ? (index - 1) : num_of_roms-1);
+  if(!buffer)
+  {
+    index = (index > 0 ? (index - 1) : num_of_roms-1);
 
-        buffer = (uint8_t)~0;
-      }
-    }
-    /* when down is pressed, and its 0 shift a buffer till its 0, then increment index to move the highlight down the screen */
-    else if(!((controller >> DOWN_BIT) & 0x01))
-    {
-      buffer = buffer << 1;
+    buffer = (uint8_t)~0;
+  }
+}
+/* when down is pressed, and its 0 shift a buffer till its 0, then increment index to move the highlight down the screen */
+else if(!((controller >> DOWN_BIT) & 0x01))
+{
+  buffer = buffer << 1;
 
-      if(!buffer)
-      {
-        index = (index < num_of_roms-1 ? (index + 1) : 0);
+  if(!buffer)
+  {
+    index = (index < num_of_roms-1 ? (index + 1) : 0);
 
-        buffer = (uint8_t)~0;
-      }
-    }
-    /* nothing? then do a count to allow quick presses to shift the buffer, and if its been to long, clear everything out */
-    else
-    {
-      counter += 1;
+    buffer = (uint8_t)~0;
+  }
+}
+/* nothing? then do a count to allow quick presses to shift the buffer, and if its been to long, clear everything out */
+else
+{
+  counter += 1;
 
-      if(counter > 32)
-      {
-        counter = 0;
-        buffer = (uint8_t)~0;
-      }
-    }
+  if(counter > 32)
+  {
+    counter = 0;
+    buffer = (uint8_t)~0;
+  }
+}
 
   \end{lstlisting}
 
   \par
-  Last is the reason for the reading E001 + index four times. This is dues to the PIC is explained in \ref{Excuses}. Example of the code below.
+  As for the reading E001 + index four times. This is dues to the PIC is explained in \ref{Excuses}. Example of the code below.
 
   \begin{lstlisting}[language=C]
 
-  buffer = *(bank_switch + index);
-  buffer = *(bank_switch + index);
-  buffer = *(bank_switch + index);
-  buffer = *(bank_switch + index);
+buffer = *(bank_switch + index);
+buffer = *(bank_switch + index);
+buffer = *(bank_switch + index);
+buffer = *(bank_switch + index);
   \end{lstlisting}
 
 \end{document}
